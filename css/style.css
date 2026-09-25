@@ -1,0 +1,1501 @@
+/* =========================================================
+   style.css ： ページ全体の見た目（色・文字・配置・動き）を決めるファイル
+   ・テーマは「近未来のサロン」。深い茶色がかった黒の背景に、
+     ブランドカラー（#A8501F テラコッタ）から生まれた、あたたかい光を灯す
+   ・スマホ表示を基本に書き、画面が広いとき（@media）だけ上書きする
+     「モバイルファースト」という書き方をしています
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   0. 色や余白の「変数」
+   よく使う値に名前を付けておくと、ここを変えるだけで全体が変わる
+   --------------------------------------------------------- */
+:root {
+  --color-bg: #0b0806;          /* 背景：茶色みのある黒 */
+  --color-bg-tint: #140f0b;     /* 背景：ほんの少し明るい黒（セクションを交互に塗り分ける） */
+  --color-tile: #1f1813;        /* 角丸のタイル（カード）の色 */
+  --color-text: #f5f5f7;        /* 基本の文字色（白に近いグレー） */
+  --color-sub: #a39488;         /* 補足文の文字色（グレー） */
+  --color-dim: #3d332c;         /* まだ光っていない文字の色（コンセプトの文章で使う） */
+  --color-line: rgba(255, 255, 255, 0.1);   /* 区切り線（白の10%） */
+  --color-brand: #a8501f;       /* ★ブランドカラー（設定表の値）。ボタンなどに使う */
+  --color-accent: var(--color-brand);
+
+  /* ブランドカラーから作った、あたたかい光の色（グラデーションや光る枠に使う）
+     ※ 変数名は前のサイトのまま（amber など）ですが、中身の色を差し替えています */
+  --neon-amber: #ffe0c2;        /* クリーム */
+  --neon-pink: #f2b58a;         /* アプリコット */
+  --neon-violet: #d9824a;       /* カッパー（銅色） */
+  --neon-blue: #c0612b;         /* ブランドカラーを少し明るくした色 */
+  --neon-cyan: #f6d2b0;         /* ピーチ */
+
+  /* ネオンカラーを順番につないだグラデーション。最初と最後を同じ色にすると、
+     流して動かしたときに継ぎ目が見えない */
+  --gradient: linear-gradient(90deg, var(--neon-amber), var(--neon-pink), var(--neon-violet),
+                              var(--neon-blue), var(--neon-cyan), var(--neon-amber));
+
+  --header-height: 52px;        /* 固定ヘッダーの高さ */
+  --radius: 28px;               /* タイルの角の丸み（大きめで今っぽく） */
+  --max-width: 1080px;          /* 中身の最大幅 */
+
+  /* 端末標準の日本語フォント（Mac/iPhone はヒラギノ、Windows は游ゴシック/メイリオ） */
+  --font: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+          "Yu Gothic", "Meiryo", sans-serif;
+  /* 数字用の等幅フォント（数字が機械っぽく並んで、近未来感が出る） */
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* 「--angle」を角度として登録する。こうすると角度を少しずつ動かすアニメーションができる
+   （光る枠がぐるぐる回る演出で使う。未対応のブラウザでは止まった枠になるだけ） */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+
+/* ---------------------------------------------------------
+   1. 基本設定（リセット）
+   ブラウザごとの見た目の差をなくし、扱いやすくする
+   --------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;   /* 幅の計算に padding と border を含める（レイアウトが崩れにくい） */
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;                         /* ページ内リンクでなめらかにスクロール */
+  scroll-padding-top: var(--header-height);        /* 移動先が固定ヘッダーに隠れないようにずらす */
+  -webkit-text-size-adjust: 100%;                  /* iPhone 横向きで文字が勝手に大きくなるのを防ぐ */
+  background: var(--color-bg);
+}
+
+body {
+  font-family: var(--font);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.7;                                /* 行間。日本語は少し広めが読みやすい */
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;             /* Mac で文字をなめらかに表示 */
+  word-break: auto-phrase;                         /* 対応ブラウザでは、日本語を言葉の切れ目で改行する */
+  overflow-x: hidden;                              /* 飾りが横にはみ出してもスクロールさせない */
+}
+
+img {
+  display: block;       /* 画像の下にできる謎のすき間を消す */
+  max-width: 100%;      /* 親の幅より大きくならないようにする */
+  height: auto;         /* 縦横比を保つ */
+}
+
+a {
+  color: var(--neon-blue);
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;     /* 箇条書きの「・」や番号を消す */
+}
+
+address {
+  font-style: normal;   /* address は標準で斜体になるので戻す */
+}
+
+/* hidden 属性が付いた要素は必ず隠す（CSS の display 指定より優先させる） */
+[hidden] {
+  display: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   2. 共通パーツ（複数のセクションで使い回すクラス）
+   --------------------------------------------------------- */
+
+/* 中身を中央に寄せ、左右に余白をとる箱 */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* 表が中心のセクションは幅を狭くして読みやすく */
+.container.narrow {
+  max-width: 760px;
+}
+
+/* セクション全体：上下にたっぷり余白 */
+.section {
+  padding: 120px 0;
+}
+
+/* ほんの少し明るい黒のセクション（真っ黒と交互に使って区切りを作る） */
+.section-tint {
+  background: var(--color-bg-tint);
+}
+
+/* 見出しの上の小さな英字ラベル（機械的な等幅フォントで） */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-sub);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;    /* 英字をすべて大文字にする */
+  margin-bottom: 16px;
+}
+
+/* 左寄せの、大きく太い見出し */
+.headline {
+  font-size: clamp(2rem, 8.5vw, 4.5rem);    /* 画面幅に合わせて自動で大きさが変わる */
+  word-break: auto-phrase;                  /* 対応ブラウザでは、日本語を言葉の切れ目で改行する */
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 56px;
+}
+
+/* 角丸のタイル（カード）。ページ全体でこの形を使い回す */
+.tile {
+  background: var(--color-tile);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius);
+  overflow: hidden;           /* 角丸からはみ出た画像を切り取る */
+}
+
+/* 青いカプセル型のボタン */
+.pill-button {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;       /* 大きな値にすると両端が丸いカプセル型になる */
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.pill-button:hover {
+  background: #bf5e27;         /* ブランドカラーを少し明るく */
+  box-shadow: 0 0 20px rgba(242, 181, 138, 0.6);   /* ふわっと青く光る */
+}
+
+/* 言葉のまとまりを途中で改行させないためのクラス */
+.nowrap {
+  display: inline-block;
+}
+
+/* スマホのときだけ改行したい <br> に付けるクラス */
+.sp-only {
+  display: inline;
+}
+
+/* PC のときだけ改行したい <br> に付けるクラス */
+.pc-only {
+  display: none;
+}
+
+/* 「〜を見る ›」のような矢印付きリンク */
+.link-arrow {
+  color: var(--neon-blue);
+}
+
+.link-arrow::after {
+  content: " ›";
+}
+
+
+/* ---------------------------------------------------------
+   3. 近未来エフェクト（あちこちで使う動きの部品）
+   --------------------------------------------------------- */
+
+/* ▼ 流れるグラデーション文字
+   グラデーションを文字の形で切り抜き、横に少しずつずらし続ける */
+.grad-text {
+  background-image: var(--gradient);
+  background-size: 200% 100%;         /* 文字の2倍の幅のグラデーションを用意して */
+  -webkit-background-clip: text;      /* 文字の形で切り抜く（Safari 用） */
+  background-clip: text;
+  color: transparent;                 /* 文字自体は透明にして、後ろのグラデーションを見せる */
+  animation: gradient-flow 8s linear infinite;
+}
+
+@keyframes gradient-flow {
+  from { background-position: 0% 50%; }
+  to   { background-position: -200% 50%; }   /* ちょうど1周分ずらすと、つなぎ目なくくり返せる */
+}
+
+/* ▼ ネオンの光がぐるぐる回る枠
+   外側の箱に「回る虹色の背景」を敷き、2px 内側に中身を置くと枠だけ見える */
+.glow-frame {
+  position: relative;
+  isolation: isolate;                 /* 後ろの光（::after）がこの箱の外に潜り込まないようにする */
+  padding: 2px;                       /* ← これが光る枠の太さ */
+  border-radius: var(--radius);
+  background: conic-gradient(from var(--angle), var(--neon-cyan), var(--neon-violet),
+                             var(--neon-pink), var(--neon-amber), var(--neon-cyan));
+  animation: spin 6s linear infinite;
+}
+
+/* 同じ虹色をぼかして後ろに置き、光がにじんで見えるようにする */
+.glow-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(28px);
+  opacity: 0.55;
+}
+
+.glow-frame > * {
+  border-radius: calc(var(--radius) - 2px);   /* 中身の角丸を枠に合わせる */
+}
+
+@keyframes spin {
+  to { --angle: 360deg; }             /* 角度を 0 → 360度 まで回し続ける */
+}
+
+/* ▼ マウスの位置に光が付いてくるカード
+   JavaScript がマウスの位置を --mx / --my に入れてくれる */
+.spotlight {
+  position: relative;
+  transition: transform 0.4s ease, border-color 0.4s;
+}
+
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;               /* 光がクリックの邪魔をしないように */
+  border-radius: inherit;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%),
+                              rgba(217, 130, 74, 0.28), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.spotlight:hover {
+  transform: translateY(-6px);        /* 少し浮き上がる */
+  border-color: rgba(217, 130, 74, 0.5);
+}
+
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* ▼ 画面上部のスクロール進み具合バー */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: 2px;
+  background: var(--gradient);
+  transform-origin: left;                             /* 左端を基準に伸ばす */
+  transform: scaleX(var(--progress, 0));              /* 0〜1 の値で長さが変わる（JavaScriptで更新） */
+  box-shadow: 0 0 12px rgba(217, 130, 74, 0.8);
+}
+
+/* ▼ スクロールで「ふわっ」と表示（ぼかしが晴れるように現れる）
+   最初は透明＆下にずらし＆ぼかしておき、JavaScript が is-visible を付けたら元に戻る */
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  filter: blur(10px);
+  transition: opacity 1.1s cubic-bezier(0.2, 0.7, 0.2, 1),
+              transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1),
+              filter 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.fade-in.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* 「ふわっと表示」と「光るカード」を両方付けた要素でも、マウスを乗せたら浮き上がるようにする */
+.spotlight.fade-in {
+  transition: opacity 1.1s ease, filter 1.1s ease, transform 0.5s ease, border-color 0.4s;
+}
+
+.spotlight.fade-in.is-visible:hover {
+  transform: translateY(-6px);
+}
+
+
+/* ---------------------------------------------------------
+   4. ヘッダー・ナビゲーション（黒いすりガラス風）
+   --------------------------------------------------------- */
+.site-header {
+  position: fixed;          /* スクロールしても画面上部に固定 */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;             /* 他の要素より手前に表示 */
+  height: var(--header-height);
+}
+
+/* 半透明＋ぼかしの背景は ::before（見えない追加の箱）に付ける。
+   ヘッダー本体に直接付けると、中のスマホ用メニューの表示位置がずれるため */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(20, 15, 11, 0.72);    /* 茶色みのある黒の半透明 */
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.nav {
+  max-width: var(--max-width);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;                    /* 横並びにする */
+  align-items: center;              /* 縦方向の中央ぞろえ */
+  justify-content: space-between;   /* 左右の端に振り分ける */
+}
+
+.nav-logo {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.nav-logo span {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--color-sub);
+}
+
+/* 右側（メニュー・ボタン）をまとめる箱 */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* --- スマホ用メニューボタン（二本線） --- */
+.nav-toggle {
+  width: 44px;               /* 指で押しやすい大きさ */
+  height: 44px;
+  margin-right: -12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.nav-toggle span {
+  position: absolute;
+  left: 13px;
+  width: 18px;
+  height: 1.5px;
+  background: var(--color-text);
+  transition: transform 0.3s;
+}
+
+.nav-toggle span:nth-child(1) { top: 18px; }
+.nav-toggle span:nth-child(2) { top: 25px; }
+
+/* メニューが開いているときは線を回転させて「×」にする */
+.nav-toggle[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(3.5px) rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(2) {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
+/* --- スマホ用メニュー本体（最初は隠しておく） --- */
+.nav-menu {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16px 24px 32px;
+  background: rgba(11, 8, 6, 0.97);
+  opacity: 0;                 /* 透明にして */
+  visibility: hidden;         /* クリックもできないようにする */
+  transform: translateY(-8px);
+  transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+}
+
+/* JavaScript で is-open が付いたら表示 */
+.nav-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.nav-menu a {
+  display: block;
+  padding: 14px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-line);
+}
+
+
+/* ---------------------------------------------------------
+   5. メインビジュアル：3つのシーン（全画面・重なるスクロール）
+   --------------------------------------------------------- */
+
+/* 3つのシーンを入れる箱。シーンの高さ×3 の長さになる */
+.scenes {
+  position: relative;
+}
+
+/* 1つのシーン：画面いっぱいの大きさ
+   position: sticky で、スクロールしても画面の上にはりつく。
+   あとから来たシーンが上に重なるので、「下から次の場面がかぶさる」動きになる */
+.scene {
+  position: sticky;
+  top: 0;
+  height: 100vh;               /* 画面の高さいっぱい（古いブラウザ用） */
+  height: 100svh;              /* スマホのアドレスバーを除いた高さ（対応ブラウザ用） */
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+/* --- 背景のアニメーション（動画の代わり） --- */
+.scene-media {
+  position: absolute;
+  inset: 0;
+  /* 次のシーンにかぶされるほど（--cover が 0 → 1）、少し縮んで暗くなる。
+     --cover の値は JavaScript が入れる */
+  transform: scale(calc(1 - var(--cover, 0) * 0.12));
+  filter: brightness(calc(1 - var(--cover, 0) * 0.7));
+  border-radius: calc(var(--cover, 0) * 40px);   /* 縮むときに角が丸くなる */
+  overflow: hidden;
+  will-change: transform;      /* なめらかに動かすための、ブラウザへのヒント */
+}
+
+.scene-media img,
+.scene-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;           /* 画面の縦横比が違っても、すき間なく埋める */
+  animation: slow-zoom 24s ease-in-out infinite alternate;   /* ゆっくり寄ったり引いたり */
+}
+
+@keyframes slow-zoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+
+/* 文字を読みやすくするため、下の方をうっすら暗くする */
+.scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* 写真は明るいので、下は濃く・上もうっすら暗くして、白い文字とヘッダーを読みやすくする */
+  background: linear-gradient(to top, rgba(11, 8, 6, 0.92), rgba(11, 8, 6, 0.45) 55%, rgba(11, 8, 6, 0.25));
+  pointer-events: none;
+}
+
+/* --- 左下の文字 --- */
+.scene-text {
+  position: absolute;
+  z-index: 1;                  /* 暗い幕（::after）より手前に */
+  left: max(24px, calc((100vw - var(--max-width)) / 2 + 24px));   /* 本文の左端とそろえる */
+  right: 24px;
+  bottom: 96px;
+  opacity: calc(1 - var(--cover, 0) * 1.6);   /* かぶされ始めたら、先に文字が消える */
+}
+
+/* シーン1の店名（h1） */
+.scene-brand {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.scene-brand span {
+  margin-left: 12px;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--color-sub);
+  letter-spacing: 0.04em;
+}
+
+/* シーン2・3の小さな英字ラベル */
+.scene-label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-sub);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* 大きな見出し */
+.scene-title {
+  font-size: clamp(3.5rem, 15vw, 8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* 見出しを「下からせり上がる」ように見せる仕組み：
+   外側の .line で見える範囲を区切り（overflow: hidden）、
+   中の span を下にずらしておいて、表示するときに元の位置へ戻す */
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;      /* 文字の下が切れないように */
+}
+
+.line > span {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scene-sub {
+  margin-top: 16px;
+  font-size: clamp(1rem, 3.5vw, 1.25rem);
+  line-height: 1.8;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 1s ease 0.4s, transform 1s ease 0.4s;   /* 見出しより 0.4秒 遅れて出る */
+}
+
+/* 丸い矢印付きのリンク */
+.scene-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  opacity: 0;
+  transition: opacity 1s ease 0.7s;
+}
+
+.scene-link::before {
+  content: "›";
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.scene-link:hover::before {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+
+/* JavaScript が今見ているシーンに is-active を付けると、文字が現れる */
+.scene.is-active .line > span {
+  transform: none;
+}
+
+.scene.is-active .scene-sub {
+  opacity: 1;
+  transform: none;
+}
+
+.scene.is-active .scene-link {
+  opacity: 1;
+}
+
+/* --- 「Scroll」の目印（線の中を光が流れ落ちる） --- */
+.scroll-cue {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-sub);
+  padding-bottom: 48px;
+}
+
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--neon-amber));
+  background-size: 100% 200%;
+  animation: cue 2s ease-in-out infinite;
+}
+
+@keyframes cue {
+  from { background-position: 0 -100%; }
+  to   { background-position: 0 100%; }
+}
+
+/* --- 右下の「01 / 03」と進み具合の線 --- */
+.scene-counter {
+  position: fixed;             /* 画面に固定（シーンを見ている間だけ表示） */
+  z-index: 50;
+  right: max(24px, calc((100vw - var(--max-width)) / 2 + 24px));
+  bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+/* シーンを見ている間だけ JavaScript が is-shown を付ける */
+.scene-counter.is-shown {
+  opacity: 1;
+}
+
+.scene-bar {
+  width: 80px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+/* 線の中身：--p（0〜1）の割合だけ左から伸びる */
+.scene-bar span {
+  display: block;
+  height: 100%;
+  background: var(--gradient);
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+}
+
+
+/* ---------------------------------------------------------
+   6. コンセプト（スクロールで光る文章）
+   --------------------------------------------------------- */
+.reveal-text {
+  max-width: 900px;
+  word-break: auto-phrase;    /* 言葉の切れ目で改行する */
+  font-size: clamp(1.375rem, 4.6vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+
+/* まだ光っていない文は暗いグレー */
+.reveal-text span {
+  color: var(--color-dim);
+  transition: color 0.8s ease;
+}
+
+/* JavaScript が is-lit を付けたら白く光る */
+.reveal-text span.is-lit {
+  color: var(--color-text);
+}
+
+.about-image {
+  margin-top: 72px;
+}
+
+.about-image img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+
+/* ---------------------------------------------------------
+   7. 数字で見るサロン
+   --------------------------------------------------------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);   /* スマホは2列 */
+  gap: 48px 24px;
+}
+
+.stat {
+  border-top: 1px solid var(--color-line);
+  padding-top: 20px;
+}
+
+.stat-label {
+  font-size: 0.9375rem;
+  color: var(--color-sub);
+}
+
+.stat-number {
+  font-size: clamp(3.5rem, 13vw, 6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+/* 「組」「日間」などの単位 */
+.stat-number small {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-left: 4px;
+  letter-spacing: 0;
+}
+
+
+/* ---------------------------------------------------------
+   8. メニューと料金（2枚のタイル）
+   --------------------------------------------------------- */
+.menus {
+  display: grid;
+  gap: 24px;
+}
+
+/* 光る枠の中のタイルを、枠いっぱいに広げる */
+.menu-inner {
+  height: 100%;
+  border: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-inner img {
+  width: 100%;
+  aspect-ratio: 16 / 10;       /* 横長に切り取る */
+  object-fit: cover;
+}
+
+.menu-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 28px 32px;
+}
+
+/* メニューの種類のラベル（整体はピーチ） */
+.menu-tag {
+  align-self: flex-start;      /* 横いっぱいに伸びないようにする */
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--neon-cyan);
+  border: 1px solid rgba(246, 210, 176, 0.5);
+}
+
+/* エステはアプリコット */
+.menu-tag.tag-esthe {
+  color: var(--neon-pink);
+  border-color: rgba(242, 181, 138, 0.5);
+}
+
+.menu-body h3 {
+  margin-top: 12px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.menu-text {
+  margin-top: 8px;
+  color: var(--color-sub);
+}
+
+/* 「施術時間」と「料金」を左右に並べる */
+.menu-spec {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  margin-top: auto;            /* 上の余白を自動で広げて、カードの下にそろえる */
+  padding-top: 24px;
+  border-top: 1px solid var(--color-line);
+}
+
+.menu-spec div {
+  padding-top: 16px;
+}
+
+.menu-spec dt {
+  font-size: 0.8125rem;
+  color: var(--color-sub);
+}
+
+.menu-spec dd {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* 料金は大きく右寄せ */
+.menu-spec div:last-child {
+  text-align: right;
+}
+
+.menu-spec div:last-child dd {
+  font-size: clamp(2.5rem, 10vw, 3.5rem);
+}
+
+.menu-spec small {
+  margin-left: 2px;
+  font-family: var(--font);
+  font-size: 1rem;
+}
+
+/* 料金の注意書き */
+.price-caution {
+  margin-top: 40px;
+  text-align: center;
+  font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   9. 店内ギャラリー（大小のタイル）
+   --------------------------------------------------------- */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);   /* スマホは2列 */
+  gap: 12px;
+}
+
+/* タイルは基本、正方形 */
+.gallery figure {
+  aspect-ratio: 1 / 1;
+}
+
+/* スマホでは、最初と最後の写真を横2マス分のワイドなタイルにする */
+.gallery figure:first-child,
+.gallery figure:last-child {
+  grid-column: span 2;
+  aspect-ratio: 2 / 1;
+}
+
+.gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease, filter 0.8s ease;
+}
+
+/* マウスを乗せると、少し拡大して色が鮮やかになる */
+.gallery figure:hover img {
+  transform: scale(1.06);
+  filter: saturate(1.4) brightness(1.1);
+}
+
+
+/* ---------------------------------------------------------
+   10. 店舗情報
+   --------------------------------------------------------- */
+.access {
+  display: grid;
+  gap: 40px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 7.5em 1fr;   /* 左：項目名（「変更・キャンセル」が1行に収まる幅）、右：内容 */
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.info-row:first-child {
+  border-top: 1px solid var(--color-line);
+}
+
+.info-row dt {
+  font-weight: 600;
+  color: var(--color-sub);
+}
+
+.info-note {
+  display: block;
+  color: var(--color-sub);
+  font-size: 0.875rem;
+}
+
+/* ---------------------------------------------------------
+   11. フッター
+   --------------------------------------------------------- */
+.site-footer {
+  padding: 48px 0 120px;      /* 下は浮かぶボタンに隠れないよう広めに */
+  border-top: 1px solid var(--color-line);
+  font-size: 0.8125rem;
+  color: var(--color-sub);
+  text-align: center;
+}
+
+.footer-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.copyright {
+  margin-top: 16px;
+}
+
+
+/* ---------------------------------------------------------
+   12. 画面の下に浮かぶカプセル型ボタンと、料金・予約の小窓
+   --------------------------------------------------------- */
+.float-pill {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 8px 8px 24px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: rgba(40, 40, 45, 0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  /* 最初は画面の下に隠しておく */
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 40px);   /* 左右中央に置き、さらに40px 下へずらす */
+  transition: opacity 0.5s, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* JavaScript が is-shown を付けたら浮かび上がる */
+.float-pill.is-shown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+/* 右側の青い丸の「＋」 */
+.float-pill .plus {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.float-pill:hover .plus {
+  transform: rotate(90deg);
+  box-shadow: 0 0 18px rgba(242, 181, 138, 0.8);
+}
+
+/* --- 料金・予約の小窓（dialog） --- */
+.quick-info {
+  position: fixed;
+  inset: 0;
+  margin: auto;               /* 画面の真ん中に置く */
+  width: min(420px, calc(100% - 32px));
+  padding: 40px 28px 32px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-tile);
+  color: var(--color-text);
+}
+
+/* 小窓が開いたとき、ぽんっと現れる */
+.quick-info[open] {
+  animation: pop-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* 小窓の後ろの暗い幕 */
+.quick-info::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.quick-info h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+
+.quick-info dl {
+  display: grid;
+  grid-template-columns: 4.5em 1fr;
+  gap: 10px 12px;
+  margin-bottom: 28px;
+}
+
+.quick-info dt {
+  color: var(--color-sub);
+}
+
+.quick-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+
+/* ---------------------------------------------------------
+   13. 「視差効果を減らす」設定の人には動きを出さない（やさしい配慮）
+   --------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .reveal-text span {
+    color: var(--color-text);
+  }
+  /* シーンの文字は最初から表示しておく */
+  .line > span,
+  .scene-sub,
+  .scene-link {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+
+/* =========================================================
+   ▼ 画面幅が 768px 以上（タブレット・PC）のときの上書き
+   ========================================================= */
+@media (min-width: 768px) {
+
+  .section {
+    padding: 160px 0;
+  }
+
+  .sp-only {
+    display: none;            /* PC ではスマホ用の改行を消す */
+  }
+
+  .pc-only {
+    display: inline;          /* PC では改行を有効にする */
+  }
+
+  .scene-text {
+    bottom: 120px;             /* PC では少し上に */
+  }
+
+  .stats {
+    grid-template-columns: repeat(4, 1fr);   /* 横4列 */
+  }
+
+  .gallery {
+    grid-template-columns: repeat(3, 1fr);   /* 横3列 */
+    gap: 20px;
+  }
+
+  /* 1枚目は縦横2マス分の大きなタイルに */
+  .gallery figure:first-child {
+    grid-row: span 2;
+    aspect-ratio: auto;       /* 大きさはマス目に合わせる */
+  }
+
+  /* 最後の写真は PC では普通の正方形に戻す */
+  .gallery figure:last-child {
+    grid-column: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .access {
+    grid-template-columns: 1fr 1fr;          /* 情報と地図を横並び */
+    align-items: start;
+    gap: 56px;
+  }
+}
+
+
+/* =========================================================
+   ▼ 画面幅が 1024px 以上のとき：メニューを横並びで常に表示
+   ========================================================= */
+@media (min-width: 1024px) {
+
+  /* スマホ用ボタンを隠す */
+  .nav-toggle {
+    display: none;
+  }
+
+  .nav-menu {
+    position: static;
+    display: flex;
+    gap: 28px;
+    padding: 0;
+    background: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .nav-menu a {
+    padding: 0;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    border: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .nav-menu a:hover,
+  .nav-menu a[aria-current="page"] {
+    opacity: 1;
+  }
+}
+
+
+/* #########################################################
+   ここから下は、このサロンのページ用に追加した見た目
+   ######################################################### */
+
+
+/* ---------------------------------------------------------
+   14. 基本情報を並べた小さなカプセル（駅から○分・営業時間など）
+   --------------------------------------------------------- */
+/* 大きめのカプセル型ボタン（電話で問い合わせる） */
+.pill-large {
+  padding: 12px 28px;
+  font-size: 1rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.chips li {
+  padding: 6px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 0.8125rem;
+}
+
+
+/* ---------------------------------------------------------
+   15. ご利用の流れ
+   --------------------------------------------------------- */
+.steps {
+  display: grid;
+  gap: 16px;
+}
+
+.step {
+  padding: 32px 28px;
+}
+
+/* 大きな番号「01」「02」「03」 */
+.step-number {
+  font-family: var(--font-mono);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.step h3 {
+  font-size: 1.25rem;
+  margin-bottom: 6px;
+}
+
+.step p:last-child {
+  color: var(--color-sub);
+  font-size: 0.9375rem;
+}
+
+/* ▼ 追加分：画面幅が 768px 以上のとき */
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);   /* 横2列 */
+  }
+}
+
+
+/* ---------------------------------------------------------
+   16. ご予約（公式LINE）
+   --------------------------------------------------------- */
+
+/* LINE のボタン：LINE らしい緑色のカプセル型 */
+.line-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: #06c755;        /* LINE の緑 */
+  color: #fff;
+  font-weight: 700;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+/* ボタンの左に、吹き出しの形の小さなアイコンを CSS で描く */
+.line-button::before {
+  content: "";
+  width: 18px;
+  height: 14px;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 4px 5px 0 -3px #fff;   /* 吹き出しのしっぽ */
+}
+
+.line-button:hover {
+  background: #05b44c;
+  box-shadow: 0 0 24px rgba(6, 199, 85, 0.45);
+  transform: translateY(-2px);
+}
+
+/* 大きめのボタン（ご予約セクション用） */
+.line-large {
+  padding: 16px 36px;
+  font-size: 1.0625rem;
+}
+
+/* 料金の下のボタン */
+.price-line {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* ご予約のタイル：スマホでは縦に、PCでは左右に並べる */
+.reserve {
+  display: grid;
+  gap: 40px;
+  padding: 36px 28px;
+}
+
+/* 予約の手順（1・2・3） */
+.reserve-steps li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.reserve-num {
+  flex-shrink: 0;             /* 文が長くても番号は縮めない */
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  width: 1.2em;
+}
+
+.reserve-note {
+  margin: 20px 0 28px;
+  font-size: 0.9375rem;
+  color: var(--color-sub);
+}
+
+/* QRコードの場所 */
+.reserve-qr {
+  text-align: center;
+}
+
+/* 貼り付け前の仮の枠（点線） */
+.qr-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  color: var(--color-sub);
+}
+
+.qr-placeholder span {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.qr-placeholder small {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* 本物のQRコード画像を入れたとき（白いふちを付けて読み取りやすく） */
+.reserve-qr img {
+  margin: 0 auto;
+  padding: 10px;
+  background: #fff;
+  border-radius: 16px;
+}
+
+.qr-caption {
+  margin-top: 12px;
+  font-size: 0.8125rem;
+  color: var(--color-sub);
+}
+
+/* 文中のリンク（店舗情報の「ご予約方法を見る」） */
+.info-note a {
+  color: var(--neon-violet);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* 画面下に数秒だけ出る小さなお知らせ（LINE の URL が仮のとき） */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  z-index: 150;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 14px 22px;
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  background: rgba(40, 32, 26, 0.95);
+  font-size: 0.9375rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 20px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.toast.is-shown {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+
+/* ---------------------------------------------------------
+   17. 変更・キャンセルのルール
+   --------------------------------------------------------- */
+.policy {
+  margin-top: 40px;
+  padding: 36px 28px;
+  text-align: center;
+  border-color: rgba(217, 130, 74, 0.4);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(168, 80, 31, 0.28), transparent 70%),
+    var(--color-tile);
+}
+
+.policy-label {
+  font-size: 0.875rem;
+  color: var(--color-sub);
+  letter-spacing: 0.1em;
+}
+
+.policy-main {
+  margin-top: 8px;
+  font-size: clamp(1.25rem, 4.5vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.policy-main strong {
+  font-family: var(--font-mono);
+  font-size: 1.3em;
+}
+
+.policy-sub {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  color: var(--color-sub);
+}
+
+/* 数字の前の小さな文字（「前日」） */
+.stat-prefix {
+  margin-right: 4px;
+  font-size: 1.25rem;
+  letter-spacing: 0;
+}
+
+.quick-caution {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ▼ 画面幅が 768px 以上のとき */
+@media (min-width: 768px) {
+  .menus {
+    grid-template-columns: 1fr 1fr;          /* メニューを横に2つ並べる */
+  }
+
+  .reserve {
+    grid-template-columns: 1fr auto;         /* 左：手順とボタン、右：QRコード */
+    align-items: center;
+    gap: 56px;
+    padding: 48px;
+  }
+
+  .policy {
+    padding: 48px;
+  }
+}
+
+/* 施術の流れ：PC では4列に（上の「追加分」で2列にしたのを上書き） */
+@media (min-width: 960px) {
+  .steps {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 写真はイメージです、の注記（ギャラリーの下） */
+.photo-note {
+  margin-top: 20px;
+  font-size: 0.8125rem;
+  color: var(--color-sub);
+  text-align: right;
+}

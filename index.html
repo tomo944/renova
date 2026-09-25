@@ -319,14 +319,26 @@
         <p class="eyebrow fade-in">Gallery</p>
         <h2 class="headline fade-in">街を見わたす、<br>プライベートな空間。</h2>
 
-        <!-- 1枚目は大きく、最後の1枚はスマホで横長に表示される（CSS の .gallery で設定） -->
-        <div class="gallery">
-          <figure class="tile fade-in"><img src="images/room-treatment.jpg" alt="床から天井までの大きな窓のそばに施術ベッドが置かれた、高層階の明るい施術室" width="1024" height="1024" loading="lazy"></figure>
-          <figure class="tile fade-in"><img src="images/entrance.jpg" alt="白い大理石の床と、白いユリが飾られた明るい玄関" width="1024" height="1024" loading="lazy"></figure>
-          <figure class="tile fade-in"><img src="images/waiting.jpg" alt="ベージュのソファと観葉植物がある、木の床の待合スペース" width="1024" height="1024" loading="lazy"></figure>
-          <figure class="tile fade-in"><img src="images/powder.jpg" alt="大きな鏡と白いタオルが並ぶパウダールーム" width="1024" height="1024" loading="lazy"></figure>
-          <figure class="tile fade-in"><img src="images/window-tea.jpg" alt="街を見わたす窓辺の、ハーブティーが置かれたカウンセリングスペース" width="1024" height="1024" loading="lazy"></figure>
-          <figure class="tile fade-in"><img src="images/building.jpg" alt="青空の下、水辺に建つ高層マンションの外観（イメージ）" width="1024" height="1024" loading="lazy"></figure>
+        <!-- 短い説明文（静かな雰囲気を伝える） -->
+        <p class="calm-lead fade-in">窓からのやわらかな光と、静かな時間。<br>周りを気にせず、ゆったりとお過ごしいただけます。</p>
+
+        <!-- 落ち着いた並べ方：大きな1枚（施術室）＋ 小さな2枚（玄関・建物）
+             マウスを乗せても拡大などはせず、写真の下に名前を小さく添える -->
+        <div class="calm-gallery">
+          <figure class="calm-main fade-in">
+            <img src="images/room-treatment.jpg" alt="床から天井までの大きな窓のそばに施術ベッドが置かれた、明るい施術室" width="1024" height="1024" loading="lazy">
+            <figcaption>施術室</figcaption>
+          </figure>
+          <div class="calm-sub">
+            <figure class="fade-in">
+              <img src="images/entrance.jpg" alt="白い大理石の床と、白いユリが飾られた明るい玄関" width="1024" height="1024" loading="lazy">
+              <figcaption>エントランス</figcaption>
+            </figure>
+            <figure class="fade-in">
+              <img src="images/building.jpg" alt="青空の下、水辺に建つ高層マンションの外観（イメージ）" width="1024" height="1024" loading="lazy">
+              <figcaption>建物の外観</figcaption>
+            </figure>
+          </div>
         </div>
         <!-- AI で作成した写真のため、実際のサロンと異なることをお伝えする注記 -->
         <p class="photo-note fade-in">※ 掲載している写真はイメージです。実際のサロンとは異なります。</p>

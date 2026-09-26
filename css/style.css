@@ -700,8 +700,14 @@ address {
 
 /* まだ光っていない文は暗いグレー */
 .reveal-text span {
+  display: block;              /* 1文ごとに改行する */
+  margin-bottom: 0.7em;        /* 文と文のあいだに少し余白をとる */
   color: var(--color-dim);
   transition: color 0.8s ease;
+}
+
+.reveal-text span:last-child {
+  margin-bottom: 0;
 }
 
 /* JavaScript が is-lit を付けたら白く光る */
@@ -1623,11 +1629,14 @@ address {
   font-size: clamp(2.5rem, 9vw, 4.25rem);   /* 「2,000円〜」が1行に収まるよう、少し小さめに */
 }
 
-/* スマホでは、浮かぶ LINE ボタンと重ならないよう、
-   右下の「01 / 03」とスクロールの目印を隠す */
+/* 画面下中央の「Scroll」の目印は、浮かぶ LINE ボタンと同じ位置になるため、どの画面幅でも隠す */
+.scroll-cue {
+  display: none;
+}
+
+/* スマホでは、浮かぶ LINE ボタンと重ならないよう、右下の「01 / 03」も隠す */
 @media (max-width: 767px) {
-  .scene-counter,
-  .scroll-cue {
+  .scene-counter {
     display: none;
   }
 

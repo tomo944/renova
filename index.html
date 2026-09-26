@@ -11,12 +11,12 @@
 
   <!-- ▼ 検索対策：タイトルと説明文に「店舗名・地域名・業種」を入れる
        ※ 営業時間・場所は公式LINEで案内するため、ページには載せていません -->
-  <title>RE:Nova｜整体＆フェイシャルエステサロン</title>
-  <meta name="description" content="整体＆フェイシャルエステサロン「RE:Nova」。整体は2,000円〜、フェイシャルエステは4,000円〜、どちらも60分の施術です。ご予約は公式LINEから。からだと肌を、ひとつのサロンで整えます。">
+  <title>RE:Nova｜ストレッチ×整体＆フェイシャルエステサロン</title>
+  <meta name="description" content="ストレッチ×整体＆フェイシャルエステサロン「RE:Nova」。ストレッチ×整体は2,000円〜、フェイシャルエステは4,000円〜、どちらも60分の施術です。ご予約は公式LINEから。からだと肌を、ひとつのサロンで整えます。">
 
   <!-- SNSでシェアされたときに表示される情報（任意） -->
-  <meta property="og:title" content="RE:Nova｜整体＆フェイシャルエステ">
-  <meta property="og:description" content="整える、ほどける、輝く。整体2,000円〜、フェイシャルエステ4,000円〜。">
+  <meta property="og:title" content="RE:Nova｜ストレッチ×整体＆フェイシャルエステ">
+  <meta property="og:description" content="整える、ほどける、輝く。ストレッチ×整体2,000円〜、フェイシャルエステ4,000円〜。">
   <meta property="og:type" content="website">
 
   <!-- CSS（見た目）ファイルを読み込む -->
@@ -73,14 +73,16 @@
         <!-- 背景の写真。style の object-position は、スマホで左右が切れるときに残す位置（左からの割合）
              ▼ 本物の動画にしたいときは、下の <img> をこう置き換える：
              <video src="videos/scene-1.mp4" autoplay muted loop playsinline></video> -->
-        <div class="scene-media"><img src="images/relax-seitai-man.jpg" alt="整体の施術を受けて、目を閉じて穏やかにほほえむ20代の男性" width="1536" height="1024" style="object-position: 48% 50%;"></div>
+        <div class="scene-media"><img src="images/relax-seitai-man.jpg" alt="ストレッチ×整体の施術を受けて、目を閉じて穏やかにほほえむ20代の男性" width="1536" height="1024" style="object-position: 48% 50%;"></div>
         <div class="scene-text">
           <!-- h1 はページで一番大事な見出し。店名と業種を入れる -->
-          <h1 class="scene-brand">RE:Nova<span>整体＆フェイシャルエステ</span></h1>
+          <h1 class="scene-brand">RE:Nova<span>ストレッチ×整体＆フェイシャルエステ</span></h1>
           <!-- line の中の span が、下からせり上がって現れる -->
           <p class="scene-title"><span class="line"><span class="grad-text">整える。</span></span></p>
-          <p class="scene-sub">からだの土台を、ていねいに。<br>整体 60分 2,000円〜</p>
-          <a class="scene-link" href="#menu">整体について</a>
+          <p class="scene-sub">からだの土台を、ていねいに。<br>ストレッチ×整体 60分 2,000円〜</p>
+          <a class="scene-link" href="#menu">ストレッチ×整体について</a>
+          <!-- 最初の画面からすぐ予約できるように、LINE ボタンを置く -->
+          <a class="line-button scene-line" href="https://lin.ee/y2hMnHW" target="_blank" rel="noopener">公式LINEで予約する</a>
         </div>
         <!-- 下へスクロールできることを伝える目印 -->
         <p class="scroll-cue" aria-hidden="true">Scroll</p>
@@ -126,8 +128,9 @@
         <!-- reveal-text の中の span は、画面の真ん中あたりまで来ると明るくなる -->
         <p class="reveal-text">
           <span>肩や首のこり、姿勢のゆがみは、顔色やむくみにもあらわれます。</span>
-          <span>RE:Nova は、整体とフェイシャルエステをひとつのサロンで。</span>
-          <span>60分の施術のあいだ、あなたのためだけに時間を使います。</span>
+          <span>RE:Nova は、ストレッチ×整体とフェイシャルエステをひとつのサロンで。</span>
+          <span>はじめにカウンセリングで、からだや肌のお悩み、ふだんの過ごし方を伺います。</span>
+          <span>カウンセリングの内容をもとに、60分の施術をあなたに合わせて組み立てます。</span>
           <span>鏡を見るのが、少し楽しみになる。そんな時間をお届けします。</span>
         </p>
 
@@ -139,38 +142,41 @@
 
     <!-- =========================================================
          4. 数字で見るサロン（数字が0から数え上がる）
-         ※ 設定表の「施術時間・予約枠・メニュー数・変更期限」の値
+         ※ お客様が知りたい「料金・キャンセル料」を数字で見せる
          ========================================================= -->
     <section class="section section-tint" id="numbers">
       <div class="container">
         <p class="eyebrow fade-in">Numbers</p>
         <h2 class="headline fade-in">数字で見る、<br>RE:Nova。</h2>
 
-        <!-- data-count に最終的な数字を書くと、JavaScript がそこまで数え上げる -->
+        <!-- data-count に最終的な数字を書くと、JavaScript がそこまで数え上げる
+             （2000 は「2,000」のように、3けたごとにカンマを付けて表示される） -->
         <ul class="stats">
           <li class="stat fade-in">
-            <p class="stat-label">施術時間</p>
-            <p class="stat-number"><span class="grad-text" data-count="60">60</span><small>分</small></p>
+            <p class="stat-label">ストレッチ×整体<br>60分</p>
+            <p class="stat-number"><span class="grad-text" data-count="2000">2,000</span><small>円〜</small></p>
           </li>
           <li class="stat fade-in">
-            <p class="stat-label">1回の予約枠</p>
-            <p class="stat-number"><span class="grad-text" data-count="75">75</span><small>分</small></p>
+            <p class="stat-label">フェイシャル<br>60分</p>
+            <p class="stat-number"><span class="grad-text" data-count="4000">4,000</span><small>円〜</small></p>
           </li>
           <li class="stat fade-in">
-            <p class="stat-label">施術メニュー</p>
-            <p class="stat-number"><span class="grad-text" data-count="2">2</span><small>種類</small></p>
+            <p class="stat-label">当日のキャンセル料<br>（施術料金の）</p>
+            <p class="stat-number"><span class="grad-text" data-count="50">50</span><small>%</small></p>
           </li>
           <li class="stat fade-in">
-            <p class="stat-label">変更・キャンセル</p>
-            <p class="stat-number"><small class="stat-prefix">前日</small><span class="grad-text" data-count="20">20</span><small>時まで</small></p>
+            <p class="stat-label">無断キャンセルの場合<br>（施術料金の）</p>
+            <p class="stat-number"><span class="grad-text" data-count="100">100</span><small>%</small></p>
           </li>
         </ul>
+        <!-- キャンセル料の補足（くわしいルールは「キャンセルポリシー」へ） -->
+        <p class="stats-note fade-in">※ ご予約の変更・キャンセルは、予約日前日の20:00までにお手続きください。くわしくは<a href="#policy">キャンセルポリシー</a>をご覧ください。</p>
       </div>
     </section>
 
     <!-- =========================================================
          5. メニュー・料金
-         ※ 料金が変わったら、ここの数字を書き換える（chips・小窓・description も）
+         ※ 料金が変わったら、ここの数字を書き換える（「数字で見る」・店舗情報・description も）
          ========================================================= -->
     <section class="section" id="menu">
       <div class="container">
@@ -184,9 +190,9 @@
             <div class="tile menu-inner spotlight">
               <img src="images/relax-seitai-man.jpg" alt="タオルの上から肩と肩甲骨まわりをほぐされ、目を閉じてリラックスしている20代の男性" width="1536" height="1024" loading="lazy">
               <div class="menu-body">
-                <p class="menu-tag">整体</p>
-                <h3>整体</h3>
-                <p class="menu-text">肩や首のこり、骨盤や姿勢のゆがみなど、からだの気になるところをじっくりほぐして整えます。</p>
+                <p class="menu-tag">ストレッチ×整体</p>
+                <h3>ストレッチ×整体</h3>
+                <p class="menu-text">カウンセリングでからだの状態を確かめてから、ストレッチと整体を組み合わせて、肩や首のこり、姿勢のゆがみなど気になるところをじっくりほぐして整えます。</p>
                 <!-- dl で「施術時間」「料金」を並べる -->
                 <dl class="menu-spec">
                   <div>
@@ -209,7 +215,7 @@
               <div class="menu-body">
                 <p class="menu-tag tag-esthe">エステ</p>
                 <h3>フェイシャルエステ</h3>
-                <p class="menu-text">ハンドケアで肌をやさしく包み込み、うるおいとすっきりしたフェイスラインへ導きます。</p>
+                <p class="menu-text">カウンセリングで肌の状態やお悩みを伺ってから、ハンドケアで肌をやさしく包み込み、うるおいとすっきりしたフェイスラインへ導きます。</p>
                 <dl class="menu-spec">
                   <div>
                     <dt>施術時間</dt>
@@ -302,11 +308,16 @@
           </li>
         </ol>
 
-        <!-- 変更・キャンセルのルール（大事なので、目立つ枠で表示） -->
-        <div class="policy tile fade-in">
-          <p class="policy-label">変更・キャンセルについて</p>
-          <p class="policy-main"><span class="nowrap">ご予約の変更・キャンセルは、</span><span class="nowrap"><strong class="grad-text">前日 20:00</strong> までに</span><span class="nowrap">お願いします。</span></p>
-          <p class="policy-sub">前日20:00を過ぎると、お客様ご自身での変更・キャンセルはできません。</p>
+        <!-- キャンセルポリシー（予約システムの設定表と同じ文言。変えるときは両方そろえる） -->
+        <div class="policy tile fade-in" id="policy">
+          <p class="policy-label">キャンセルポリシー</p>
+          <ul class="policy-list">
+            <li>ご予約の変更・キャンセルは、予約日前日の20:00までに、予約確認画面からお手続きください。</li>
+            <li>当日のキャンセルは施術料金の50%、無断キャンセルは施術料金の100%をキャンセル料として申し受ける場合があります。</li>
+            <li>予約時間に遅れる場合は、LINEまたは電話でご連絡ください。到着時間によっては、施術時間を短縮させていただく場合があります。</li>
+            <li>予約時間を15分以上過ぎてもご連絡がない場合は、無断キャンセルとして扱う場合があります。</li>
+            <li>体調不良、災害、交通機関の大幅な遅延など、やむを得ない事情がある場合は個別に対応いたします。</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -358,11 +369,11 @@
         <dl class="info-list fade-in">
           <div class="info-row">
             <dt>店名</dt>
-            <dd>RE:Nova 整体＆フェイシャルエステ</dd>
+            <dd>RE:Nova ストレッチ×整体＆フェイシャルエステ</dd>
           </div>
           <div class="info-row">
             <dt>メニュー</dt>
-            <dd>整体 60分 2,000円〜<br>フェイシャルエステ 60分 4,000円〜</dd>
+            <dd>ストレッチ×整体 60分 2,000円〜<br>フェイシャルエステ 60分 4,000円〜</dd>
           </div>
           <div class="info-row">
             <dt>ご予約</dt>
@@ -370,7 +381,7 @@
           </div>
           <div class="info-row">
             <dt>変更・キャンセル</dt>
-            <dd>前日 20:00 まで</dd>
+            <dd>予約日前日の 20:00 まで<span class="info-note">（<a href="#policy">キャンセルポリシーを見る</a>）</span></dd>
           </div>
           <div class="info-row">
             <dt>営業時間・場所</dt>
@@ -387,7 +398,7 @@
        ========================================================= -->
   <footer class="site-footer">
     <div class="container">
-      <p class="footer-name">RE:Nova 整体＆フェイシャルエステ</p>
+      <p class="footer-name">RE:Nova ストレッチ×整体＆フェイシャルエステ</p>
       <p class="footer-info">ご予約・お問い合わせは公式LINEから</p>
       <p class="footer-info">※ 掲載している写真はすべてイメージです。</p>
       <!-- 年の部分は JavaScript で今年の数字に自動で書き換わる -->
@@ -396,29 +407,13 @@
   </footer>
 
   <!-- =========================================================
-       画面の下に浮かぶカプセル型ボタン（「＋」を押すと料金・予約の小窓が開く）
-       メインビジュアルを過ぎると JavaScript が表示する
+       画面の下に浮かぶ「公式LINEで予約」ボタン
+       ページを開いた直後から、どこまでスクロールしても常に表示される
        ========================================================= -->
-  <button class="float-pill" id="quick-open" type="button" aria-haspopup="dialog">
-    料金・ご予約をすばやく確認
-    <span class="plus" aria-hidden="true">+</span>
-  </button>
-
-  <!-- dialog タグは「小窓（モーダル）」を作るためのHTMLの部品 -->
-  <dialog class="quick-info" id="quick-info" aria-labelledby="quick-info-title">
-    <button class="quick-close" id="quick-close" type="button" aria-label="閉じる">×</button>
-    <p class="eyebrow">Quick info</p>
-    <h2 id="quick-info-title" class="grad-text">RE:Nova</h2>
-    <dl>
-      <dt>整体</dt><dd>60分　2,000円〜</dd>
-      <dt>エステ</dt><dd>フェイシャル 60分　4,000円〜</dd>
-      <dt>予約</dt><dd>公式LINEから</dd>
-      <dt>変更</dt><dd>前日 20:00 まで</dd>
-    </dl>
-    <p class="quick-caution">※詳しい金額については、お問い合わせください。</p>
-    <!-- 公式LINEのボタン（href の URL は「ご予約」セクションと同じものに差し替える） -->
-    <a href="https://lin.ee/y2hMnHW" class="line-button" id="quick-more" target="_blank" rel="noopener">公式LINEで予約する</a>
-  </dialog>
+  <a class="float-pill float-line is-shown" href="https://lin.ee/y2hMnHW" target="_blank" rel="noopener">
+    公式LINEで予約
+    <span class="plus" aria-hidden="true">›</span>
+  </a>
 
   <!-- LINE の URL がまだ仮のときに出す、小さなお知らせ -->
   <p class="toast" id="toast" role="status" aria-live="polite"></p>

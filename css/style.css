@@ -1579,3 +1579,117 @@ address {
     aspect-ratio: 4 / 3;
   }
 }
+
+
+/* ---------------------------------------------------------
+   最初の画面からの LINE 予約（改善点②）
+   --------------------------------------------------------- */
+
+/* シーン1の文章の下の LINE ボタン（見出しのあとに、ふわっと現れる） */
+.scene-line {
+  display: flex;
+  width: fit-content;          /* 中身の幅だけにする */
+  margin-top: 18px;
+  opacity: 0;
+  transition: opacity 1s ease 0.9s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.scene.is-active .scene-line {
+  opacity: 1;
+}
+
+/* 画面下に浮かぶボタンを、LINE の緑に */
+.float-line {
+  background: #06c755;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.float-line:hover {
+  text-decoration: none;
+  box-shadow: 0 0 24px rgba(6, 199, 85, 0.5);
+}
+
+.float-line .plus {
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 1.25rem;
+}
+
+/* 数字と単位（円〜 など）が入りきらないときは、単位を次の行に回す（改善点⑥） */
+.stat-number {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  font-size: clamp(2.5rem, 9vw, 4.25rem);   /* 「2,000円〜」が1行に収まるよう、少し小さめに */
+}
+
+/* スマホでは、浮かぶ LINE ボタンと重ならないよう、
+   右下の「01 / 03」とスクロールの目印を隠す */
+@media (max-width: 767px) {
+  .scene-counter,
+  .scroll-cue {
+    display: none;
+  }
+
+  /* スマホでは画面下の LINE ボタンが常にあるので、シーン1のボタンは出さない（二重になるため） */
+  .scene-line {
+    display: none;
+  }
+}
+
+/* 動きを減らす設定の人には、LINE ボタンを最初から表示する */
+@media (prefers-reduced-motion: reduce) {
+  .scene-line {
+    opacity: 1;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   キャンセル料・キャンセルポリシー
+   --------------------------------------------------------- */
+
+/* 「数字で見る」の下の補足文 */
+.stats-note {
+  margin-top: 32px;
+  font-size: 0.875rem;
+  color: var(--color-sub);
+}
+
+.stats-note a,
+.info-note a {
+  color: var(--neon-violet);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ポリシーの箇条書き（左寄せで読みやすく） */
+.policy-list {
+  max-width: 760px;
+  margin: 16px auto 0;
+  text-align: left;
+  font-size: 0.9375rem;
+  line-height: 1.9;
+}
+
+.policy-list li {
+  position: relative;
+  padding: 10px 0 10px 1.4em;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.policy-list li:last-child {
+  border-bottom: none;
+}
+
+/* 行頭の小さな点（銅色） */
+.policy-list li::before {
+  content: "";
+  position: absolute;
+  left: 0.3em;
+  top: 1.35em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--neon-violet);
+}

@@ -1,17 +1,16 @@
 /* =========================================================
    main.js ： トップページ（index.html）だけで使う「動き」
    ※ 全ページ共通の動きは common.js にあります（先に読み込む）
-   1. スクロールに合わせた演出（浮かぶボタン・光る文章・3つのシーン）
+   1. スクロールに合わせた演出（光る文章・3つのシーン）
    2. 数字のカウントアップ
-   3. 料金・予約時間の小窓（ダイアログ）
-   4. 公式LINEの URL がまだ仮のときの案内
+   3. 公式LINEの URL がまだ仮のときの案内
+   ※ 画面下の「公式LINEで予約」ボタンは常に表示なので、JavaScript は使っていない
    ========================================================= */
 
 
 /* ---------------------------------------------------------
    1. スクロールに合わせた演出
    --------------------------------------------------------- */
-const floatPill = document.getElementById('quick-open');
 const revealSpans = document.querySelectorAll('.reveal-text span');
 
 // メインビジュアルの3つのシーン
@@ -57,19 +56,13 @@ function updateScenes() {
 }
 
 function onScroll() {
-  const scrollTop = window.scrollY;   // 今どれだけ下にスクロールしたか
-
-  // ① 浮かぶボタン：メインビジュアル（3つのシーン）を通り過ぎたら表示
-  //    （右下の「03 / 03」が消えてから出すので、重ならない）
-  floatPill.classList.toggle('is-shown', scrollTop > scenesBox.offsetHeight - window.innerHeight * 0.4);
-
-  // ② 光る文章：文が画面の上から 65% の位置より上に来たら光らせる（戻ると暗くなる）
+  // ① 光る文章：文が画面の上から 65% の位置より上に来たら光らせる（戻ると暗くなる）
   revealSpans.forEach(function (span) {
     const top = span.getBoundingClientRect().top;   // 画面の上端から、その文までの距離
     span.classList.toggle('is-lit', top < window.innerHeight * 0.65);
   });
 
-  // ③ 3つのシーンの演出
+  // ② 3つのシーンの演出
   updateScenes();
 }
 
@@ -104,7 +97,8 @@ function countUp(element) {
     const t = Math.min((now - startTime) / duration, 1);
     // 最初は速く、最後はゆっくり止まるように変形する（イージング）
     const eased = 1 - Math.pow(1 - t, 3);
-    element.textContent = Math.round(target * eased);
+    // toLocaleString で「2000 → 2,000」のように3けたごとにカンマを付ける
+    element.textContent = Math.round(target * eased).toLocaleString('ja-JP');
     if (t < 1) {
       requestAnimationFrame(update);   // まだ途中なら、次の画面更新でもう一度
     }
@@ -130,39 +124,7 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
 
 
 /* ---------------------------------------------------------
-   3. 料金・予約時間の小窓（ダイアログ）
-   --------------------------------------------------------- */
-const dialog = document.getElementById('quick-info');
-
-// 「＋」ボタンで開く（showModal は dialog タグに用意されている命令）
-floatPill.addEventListener('click', function () {
-  dialog.showModal();
-});
-
-// ×ボタンで閉じる
-document.getElementById('quick-close').addEventListener('click', function () {
-  dialog.close();
-});
-
-// 「メニューと料金を見る」を押したら、小窓を閉じてから移動する
-document.getElementById('quick-more').addEventListener('click', function () {
-  dialog.close();
-});
-
-// 小窓の外側（暗い幕）をクリックしても閉じる
-// クリックした位置が小窓の四角形の外なら「幕をクリックした」と判断する
-dialog.addEventListener('click', function (event) {
-  const rect = dialog.getBoundingClientRect();
-  const isOutside = event.clientX < rect.left || event.clientX > rect.right ||
-                    event.clientY < rect.top || event.clientY > rect.bottom;
-  if (isOutside) {
-    dialog.close();
-  }
-});
-
-
-/* ---------------------------------------------------------
-   4. 公式LINEの URL がまだ仮のときの案内
+   3. 公式LINEの URL がまだ仮のときの案内
    href に「XXXXXXX」が残っている LINE ボタンは、押しても移動せず、
    画面下にお知らせを出す（本物の URL に差し替えると、この処理は自動的に効かなくなる）
    --------------------------------------------------------- */
